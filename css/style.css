@@ -479,6 +479,12 @@ section { position: relative; }
   margin-bottom: 14px;
 }
 
+@media (max-width: 768px) {
+  .about-copy .eyebrow {
+    text-align: center;
+  }
+}
+
 .section-title {
   font-size: clamp(1.7rem, 3.4vw, 2.5rem);
   margin-bottom: 52px;

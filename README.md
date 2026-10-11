@@ -12,7 +12,7 @@ index.html
 css/style.css
 js/main.js                 → header, menú móvil, scroll reveal, cursor custom
 js/hero-animation.js       → animación ASCII (marching squares → "AP") en el hero
-js/interactive-scene.js    → escena 3D WEBGL con orbitControl en la sección intermedia
+js/interactive-scene.js    → escena 3D WEBGL en la sección intermedia (orbitControl en desktop, controles propios en celular)
 assets/favicon.svg
 assets/agustin-palopoli.jpg → mi foto, la uso en "Sobre mí"
 ```
@@ -33,15 +33,25 @@ assets/agustin-palopoli.jpg → mi foto, la uso en "Sobre mí"
 - **Statement**, una frase corta a modo de declaración de principios: la
   ocupo en un bloque más ancho que antes (no tan centrado en una columna
   angosta), con la primera oración más grande y la segunda en cursiva y
-  más chica, a modo de aclaración.
+  más chica, a modo de aclaración. Tiene un fondo verde oscuro propio
+  (`--jade-deep`) para distinguirla del resto de la página.
 - **Escena 3D interactiva**, con una tarjeta de instrucciones en la
-  esquina que ahora es una lista con ícono para cada acción ("clic y
-  arrastrá para girarla" / "doble clic para expandirla") en vez de una
-  sola línea de texto corrida.
+  esquina que es una lista con ícono para cada acción ("clic y
+  arrastrá para girarla" / "clic para expandirla"); en celular los textos
+  cambian ("deslizá a los costados para girarla" / "tocá la esfera para
+  expandirla"). En celular tiene menos picos (360 en vez de 648) para que
+  no se trabe, solo gira de costado (el movimiento vertical del dedo
+  scrollea la página) y arriba a la izquierda tiene un botón **Agrandar**
+  que la pasa a pantalla completa, donde gira hacia cualquier lado; ahí
+  aparece arriba a la derecha el botón **Cerrar** (también cierra con Esc).
 - **Beneficios**, en formato grilla.
 - **Sobre mí**, con mi foto real dentro de un círculo con borde y glow
   verde neón.
-- **CTA final** y **footer** con mis redes y contacto.
+- **CTA final** y **footer** con mis redes y contacto. El footer tiene un
+  fondo verde oscuro sólido (`--footer-bg`) para que se note que es el final
+  de la página.
+- **Botón flotante de WhatsApp** en la esquina inferior derecha
+  (`position: fixed`), que acompaña a la página mientras se hace scroll.
 - Todo el texto de la página (párrafos) usa márgenes justificados
   (`text-align: justify` + `hyphens: auto`), así los renglones quedan
   parejos de los dos lados en vez de irregulares.
@@ -49,6 +59,7 @@ assets/agustin-palopoli.jpg → mi foto, la uso en "Sobre mí"
 ## Notas técnicas
 
 - Las dos animaciones usan p5.js en **modo instancia**, cada una montada en su propio contenedor (`#hero-canvas-container` y `#scene-canvas-container`), así no interfieren entre sí.
+- La escena 3D usa dos modos, según `(max-width: 760px), (hover: none), (pointer: coarse)` (la misma condición está en el CSS y en `interactive-scene.js`). En el modo celular no se usa `orbitControl()`: el giro se calcula con eventos de puntero, y el `touch-action` del canvas es `pan-y` (el scroll vertical es del navegador) o `none` cuando la escena está agrandada. La cantidad de picos de cada modo se ajusta en la constante `DENSITY` al principio del archivo.
 - Ambas respetan `prefers-reduced-motion`: si tengo esa preferencia activada, se muestra un fondo estático suave en vez de la animación.
 - El cursor personalizado (una nave estilo Asteroids en SVG —nariz, dos esquinas traseras y muesca central—, inclinada como un puntero de mouse, solo contorno con glow neón, nariz como hotspot exacto) se desactiva automáticamente en dispositivos táctiles (`hover: none`).
 - Los textos, colores y tipografías están centralizados como variables CSS (`:root`) en `css/style.css` para editar rápido la identidad visual.

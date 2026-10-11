@@ -25,6 +25,11 @@
   --nav-bg-scrolled: rgba(10, 15, 13, 0.92);
   --nav-border: rgba(74, 222, 156, 0.16);
 
+  /* Fondos verdosos para marcar zonas distintas de la página: la frase
+     "Interactuá con la esfera..." y el footer (el cierre de la página). */
+  --jade-deep: #0F2219;
+  --footer-bg: #143026;
+
   --font-display: "Space Grotesk", sans-serif;
   --font-body: "Inter", sans-serif;
 
@@ -234,6 +239,32 @@ section { position: relative; }
   border-color: var(--border-green);
   color: var(--green-2);
   transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   Botón flotante de WhatsApp (fixed: acompaña el scroll de la página)
+   ========================================================================== */
+.wa-fab {
+  position: fixed;
+  right: calc(20px + env(safe-area-inset-right, 0px));
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  z-index: 450; /* sobre el contenido, pero debajo del header y su menú (500) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #050505;
+  box-shadow: 0 6px 22px rgba(74, 222, 156, 0.35), 0 2px 8px rgba(0, 0, 0, 0.45);
+  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease), background 0.35s var(--ease);
+}
+
+.wa-fab:hover {
+  background: var(--glow);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(74, 222, 156, 0.45), 0 2px 8px rgba(0, 0, 0, 0.45);
 }
 
 /* ==========================================================================
@@ -479,12 +510,6 @@ section { position: relative; }
   margin-bottom: 14px;
 }
 
-@media (max-width: 768px) {
-  .about-copy .eyebrow {
-    text-align: center;
-  }
-}
-
 .section-title {
   font-size: clamp(1.7rem, 3.4vw, 2.5rem);
   margin-bottom: 52px;
@@ -538,9 +563,9 @@ section { position: relative; }
    ========================================================================== */
 .statement {
   padding: 100px 32px;
-  background: var(--bg-1);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  background: var(--jade-deep);
+  border-top: 1px solid var(--border-green);
+  border-bottom: 1px solid var(--border-green);
 }
 
 /* Antes todo el bloque vivía en una columna de 18ch (angosta y muy
@@ -581,6 +606,28 @@ section { position: relative; }
   overflow: hidden;
 }
 
+/* El stage ocupa toda la sección. En celular, al "agrandar", pasa a ser un
+   panel fijo a pantalla completa (la sección .scene conserva su altura en el
+   layout, por eso la página no salta). */
+.scene-stage {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-0);
+}
+
+.scene.is-enlarged .scene-stage {
+  position: fixed;
+  z-index: 800;
+  overscroll-behavior: none;
+}
+
+/* El header y el botón de WhatsApp viven fuera de <main>, así que se
+   dibujarían encima de la escena: los oculto mientras está agrandada, y
+   bloqueo el scroll de la página. */
+body.scene-enlarged { overflow: hidden; }
+body.scene-enlarged .site-header,
+body.scene-enlarged .wa-fab { visibility: hidden; }
+
 #scene-canvas-container {
   position: absolute;
   inset: 0;
@@ -599,11 +646,15 @@ section { position: relative; }
   height: 100% !important;
 }
 
+/* Centrado con left/right/margin auto y NO con transform: [data-reveal]
+   usa transform para animar la entrada y, al terminar, pisaba el
+   translateX(-50%) dejando la tarjeta corrida hacia la derecha. */
 .scene-caption {
   position: absolute;
   bottom: 54px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   width: fit-content;
   max-width: min(90vw, 300px);
   padding: 18px 22px;
@@ -642,6 +693,75 @@ section { position: relative; }
   flex-shrink: 0;
   color: var(--green);
 }
+
+/* Textos del caption según el modo: mouse (desktop) o celular. En celular,
+   además, cambia entre la escena normal y la agrandada. */
+.for-touch-any,
+.for-touch-inline,
+.for-touch-full { display: none; }
+
+/* Botones de la escena (solo celular). Son pastillas oscuras con borde
+   verde, igual que la tarjeta de instrucciones, con área táctil de 44px. */
+.scene-btn {
+  position: absolute;
+  z-index: 3;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--border-green);
+  border-radius: 999px;
+  background: rgba(5, 5, 5, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: border-color 0.3s var(--ease), background 0.3s var(--ease);
+}
+
+.scene-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--green);
+}
+
+.scene-btn:hover { border-color: var(--green); }
+
+.scene-btn-enlarge { top: 16px; left: 16px; }
+.scene-btn-close   { top: 16px; right: 16px; }
+
+/* Misma condición que usa interactive-scene.js para el "modo celular". */
+@media (max-width: 760px), (hover: none), (pointer: coarse) {
+  .for-desktop { display: none; }
+  .for-touch-any,
+  .for-touch-inline { display: inline; }
+
+  .scene-btn-enlarge { display: inline-flex; }
+
+  .scene.is-enlarged .for-touch-inline { display: none; }
+  .scene.is-enlarged .for-touch-full { display: inline; }
+  .scene.is-enlarged .scene-btn-enlarge { display: none; }
+  .scene.is-enlarged .scene-btn-close { display: inline-flex; }
+}
+
+/* Con la escena agrandada ocupa toda la pantalla: respeto el notch y la
+   barra inferior del celular. */
+.scene.is-enlarged .scene-btn-close {
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  right: calc(16px + env(safe-area-inset-right, 0px));
+}
+
+.scene.is-enlarged .scene-caption {
+  bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Si la animación no corre (prefers-reduced-motion o sin p5), no hay nada
+   para agrandar. */
+.scene.is-static .scene-btn { display: none !important; }
 
 /* ==========================================================================
    Benefits
@@ -739,9 +859,13 @@ section { position: relative; }
 /* ==========================================================================
    Footer
    ========================================================================== */
+/* Fondo sólido y distinto al del resto de la página, para que se note que
+   es el final. El padding de abajo es mayor para que el botón flotante de
+   WhatsApp no tape el © ni los links cuando se llega al fondo. */
 .site-footer {
-  border-top: 1px solid var(--border);
-  padding: 32px 0 40px;
+  background: var(--footer-bg);
+  border-top: 1px solid var(--border-green);
+  padding: 36px 0 96px;
 }
 
 .footer-inner {
@@ -758,7 +882,7 @@ section { position: relative; }
 .footer-name {
   font-family: var(--font-display);
   font-size: 0.9rem;
-  color: var(--text-soft);
+  color: var(--text);
 }
 
 .footer-links {
@@ -776,7 +900,7 @@ section { position: relative; }
 
 .footer-year {
   font-size: 0.8rem;
-  color: var(--text-faint);
+  color: var(--text-soft);
 }
 
 /* ==========================================================================
@@ -878,4 +1002,5 @@ section { position: relative; }
     transition: none;
   }
   .scroll-hint span { animation: none; }
+  .wa-fab { transition: none; }
 }

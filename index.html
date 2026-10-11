@@ -137,7 +137,27 @@
 
     <!-- ESCENA 3D -->
     <section class="scene" aria-label="Escena interactiva">
+      <!-- El "stage" es lo que se agranda a pantalla completa en celular. La
+           sección .scene queda en el layout con su altura original, así la
+           página no pega un salto cuando se abre o se cierra la escena. -->
+      <div class="scene-stage" id="scene-stage">
       <div id="scene-canvas-container"></div>
+
+      <!-- Solo se ven en celular (ver CSS). Agrandar: arriba a la izquierda.
+           Cerrar: aparece únicamente cuando la escena está agrandada. -->
+      <button class="scene-btn scene-btn-enlarge" id="scene-enlarge" type="button" aria-label="Agrandar la escena" data-cursor-hover>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Agrandar</span>
+      </button>
+      <button class="scene-btn scene-btn-close" id="scene-close" type="button" aria-label="Cerrar la escena" data-cursor-hover>
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span>Cerrar</span>
+      </button>
+
       <div class="scene-caption" data-reveal>
         <p class="scene-caption-title">Explorá la escena</p>
         <ul class="scene-caption-list">
@@ -147,17 +167,21 @@
               <path d="M12 3.5V1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
               <path d="M4.5 8 3 6.6M19.5 8 21 6.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
             </svg>
-            <span>Clic y arrastrá para girarla</span>
+            <span class="for-desktop">Clic y arrastrá para girarla</span>
+            <span class="for-touch-inline">Deslizá a los costados para girarla</span>
+            <span class="for-touch-full">Arrastrá para girarla hacia cualquier lado</span>
           </li>
           <li>
             <svg class="scene-caption-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <circle cx="12" cy="12" r="8.2" stroke="currentColor" stroke-width="1.6"/>
               <circle cx="12" cy="12" r="2.4" fill="currentColor"/>
             </svg>
-            <span>Clic para expandirla</span>
+            <span class="for-desktop">Clic para expandirla</span>
+            <span class="for-touch-any">Tocá la esfera para expandirla</span>
           </li>
         </ul>
       </div>
+      </div><!-- /.scene-stage -->
     </section>
 
     <!-- BENEFICIOS -->
@@ -243,6 +267,12 @@
       <span class="footer-year">© 2026</span>
     </div>
   </footer>
+
+  <!-- Botón flotante de WhatsApp: queda fijo en la esquina inferior derecha
+       y acompaña a la página mientras se hace scroll. -->
+  <a class="wa-fab" href="https://wa.me/5493873116261" target="_blank" rel="noopener" aria-label="Escribime por WhatsApp" data-cursor-hover>
+    <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.06-1.33A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2Zm5.2 14.2c-.22.62-1.28 1.18-1.77 1.24-.45.06-1 .08-1.62-.1-.37-.11-.85-.27-1.46-.53-2.57-1.11-4.24-3.7-4.37-3.87-.13-.17-1.04-1.38-1.04-2.64 0-1.25.66-1.86.9-2.12.22-.24.5-.3.66-.3h.48c.16 0 .37-.02.57.44.22.5.74 1.75.8 1.88.06.13.1.28.02.45-.08.17-.13.28-.26.43-.13.15-.27.34-.39.46-.13.13-.26.26-.11.51.15.25.66 1.1 1.42 1.78.98.87 1.8 1.15 2.06 1.28.26.13.4.11.55-.06.15-.17.65-.75.82-1.01.17-.26.34-.21.57-.13.24.09 1.5.71 1.76.84.26.13.43.19.5.3.06.11.06.62-.16 1.23Z"/></svg>
+  </a>
 
   <!-- p5.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
